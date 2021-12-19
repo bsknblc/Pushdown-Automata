@@ -1,0 +1,71 @@
+ int functionConstant = 3;
+        int functionStartConstant = 7;
+        String[][] transitionFunctionWritten = new String[numberOfStates * numberOfVariables][functionConstant];
+        int indexOfTransitions = 0;
+        int whichVariable = 0;
+        while (data.get(functionStartConstant + indexOfTransitions).split("\\s+")[0].contains("q")) {
+            for (int t = 0; t < variables.size(); t++) {
+                if (variables.get(t).equals(data.get(functionStartConstant + indexOfTransitions).split("\\s+")[1])) {
+                    whichVariable = t;
+                }
+            }
+            for (int j = 0; j < functionConstant; j++) {
+                transitionFunctionWritten[2 * (Character.getNumericValue(data.get(functionStartConstant + indexOfTransitions).split("\\s+")[0].charAt(1)) - 1) + whichVariable][j] = data.get(functionStartConstant + indexOfTransitions).split("\\s+")[j];
+            }
+            indexOfTransitions++;
+        }
+
+        Matrix transitionFunctionMatrix = new Matrix(numberOfStates, numberOfVariables);
+        for (int i = 0; i < transitionFunctionWritten.length; i++) {
+            int stateIndex = 0;
+            if(transitionFunctionWritten[i][2]==null) {
+                transitionFunctionMatrix.setMatrixValues(i / numberOfVariables, i % numberOfVariables, null);
+            }else{
+                for (int j = 0; j < states.size(); j++) {
+                    if (states.get(j).getName().equals(transitionFunctionWritten[i][2])) {
+                        stateIndex = j;
+                    }
+                }
+                transitionFunctionMatrix.setMatrixValues(i / numberOfVariables, i % numberOfVariables, states.get(stateIndex));
+            }
+        }
+
+        List<Strings> stringsToBeDetected = new ArrayList<Strings>();
+        for (int i = functionStartConstant + indexOfTransitions; i < data.size(); i++) {
+            Strings string = new Strings(data.get(i));
+            stringsToBeDetected.add(string);
+        }
+
+        //This part simulates the computation behaviour of the DFA.
+        String output = "";
+        for (Strings stringToBeDetected : stringsToBeDetected) {
+            List<String> routeTaken = new ArrayList<String>();
+            State currentState = new State(startState.getName());
+            routeTaken.add(currentState.getName());
+            for (int i = 0; i < stringToBeDetected.getString().length(); i++) {
+                String newLetter = stringToBeDetected.getString().substring(i, i + 1);
+                int index = 0;
+                for (int j = 0; j < variables.size(); j++) {
+                    if (variables.get(j).equals(newLetter)) {
+                        index = j;
+                    }
+                }
+                int stateIndex = Integer.parseInt(currentState.getName().substring(1));
+                if (transitionFunctionMatrix.getMatrix()[stateIndex - 1][index] == null) {
+                    i = stringToBeDetected.getString().length();
+                } else {
+                    currentState.setName(transitionFunctionMatrix.getMatrix()[stateIndex - 1][index].getName());
+                    routeTaken.add(currentState.getName());
+                }
+            }
+            output = output + "\n" + routeTaken.toString();
+            boolean Accepted = false;
+            for (FinalState goalState : goalStates)
+                if (currentState.getName().equals(goalState.getName())) {
+                    Accepted = true;
+                }
+            if (Accepted)
+                output = output + "\nAccepted";
+            else
+                output = output + "\nRejected";
+        }
