@@ -1,7 +1,7 @@
 # Pushdown-Automata
 Pushdown Automata for CS410 Automata Theory and Formal Languages at Ozyegin University
 
-##Input file example
+## Input file example
 2 (number of variables in input alphabet)
 2 (number of variables in stack alphabet)
 2 (number of goal states)
@@ -20,7 +20,7 @@ q3 ε X ε q4 (q3 state’inden ε ile q4 state’ine gidiyor, X popluyor, ε pu
 0011 (string to be detected)
 0111 (string to be detected)
 
-##Output file example
+## Output file example
 q1 q2 q2 q2 q3 q3 q4 (route taken)
 Accepted
 q1 q2 q2 q3 q4 (route taken)
